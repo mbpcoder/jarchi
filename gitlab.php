@@ -2,7 +2,9 @@
 
 $data = json_decode(file_get_contents('php://input'));
 
-file_put_contents(getRandomName(), json_encode($data));
+if(isset($_GET['debug'])){
+    file_put_contents(getRandomName(), json_encode($data));
+}
 
 if (is_object($data) && isset($data->event_name) && $data->event_name === 'push' && $data->total_commits_count > 0) {
 
