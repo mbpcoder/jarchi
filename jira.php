@@ -5,6 +5,8 @@ require_once 'bot.php';
 $botToken = '';
 $chatId = '';
 
+$data = json_decode(file_get_contents('php://input'));
+
 if (isset($_GET['debug'])) {
     file_put_contents(getRandomName(), json_encode($data));
 }
