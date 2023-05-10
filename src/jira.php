@@ -71,7 +71,7 @@ function getCommentMessage(string $domain, object $data): string
     $message = $data->webhookEvent . PHP_EOL;
 
     $userUrl = $domain . '/secure/ViewProfile.jspa?name=' . $data?->comment?->author?->name;
-    $message .= '<b><a href="' . $userUrl . '">' . $data?->comment?->author?->displayName . '</a></b>';
+    $message .= '<b><a href="' . $userUrl . '">' . $data?->comment?->author?->displayName . '</a></b>' . PHP_EOL;
 
     if (!empty($data?->comment?->body)) {
         $message .= '<b>Description: </b>' . strip_tags($data?->comment?->body) . PHP_EOL;
