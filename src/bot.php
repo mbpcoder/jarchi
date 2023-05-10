@@ -25,6 +25,4 @@ function sendToTelegramBot(string $botToken,string $chatId,string $message): voi
 
     $context = stream_context_create($options);
     $response = file_get_contents($url, false, $context);
-    $error = error_get_last();
-    $a =1;
 }
