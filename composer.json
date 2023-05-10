@@ -1,0 +1,28 @@
+{
+  "name": "mbpcoder/jarchi",
+  "description": "Send service notification to bots",
+  "keywords": [
+    "notification",
+    "telegram bot"
+  ],
+  "authors": [
+    {
+      "name": "Mahdi Bagheri",
+      "email": "mb.programmer@yahoo.com",
+      "homepage": "https://www.linkedin.com/in/mahdibagheri"
+    }
+  ],
+  "require": {
+    "ext-mbstring": "*",
+    "vlucas/phpdotenv": "^5.5"
+  },
+  "autoload": {
+    "psr-4": {
+      "Jarchi\\": "src/"
+    },
+    "files": [
+      "src/config.php",
+      "src/bot.php"
+    ]
+  }
+}
