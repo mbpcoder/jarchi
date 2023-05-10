@@ -1,13 +1,14 @@
 <?php
 
-require_once 'bot.php';
+require __DIR__ . '/../vendor/autoload.php';
 
-$botToken = '';
-$chatId = '';
+$botToken = config('GITLAB_BOT_TOKEN');
+$chatId = config('GITLAB_CHAT_ID');
+$debugMode = config('DEBUG', false);
 
 $data = json_decode(file_get_contents('php://input'));
 
-if(isset($_GET['debug'])){
+if ($debugMode) {
     file_put_contents(getRandomName(), json_encode($data));
 }
 
@@ -35,5 +36,5 @@ function getBranchName($data)
 
 function getRandomName()
 {
-    return 'push_' . substr(str_shuffle('abcdefghijklmnopqrstuvwxyz'), 0, 8) . '.json';
+    return __DIR__ . '/../tmp/' . 'push_' . substr(str_shuffle('abcdefghijklmnopqrstuvwxyz'), 0, 8) . '.json';
 }

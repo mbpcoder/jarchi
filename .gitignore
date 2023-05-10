@@ -4,3 +4,4 @@
 /jira_*.json
 /push_*.json
 /tmp
+composer.lock
