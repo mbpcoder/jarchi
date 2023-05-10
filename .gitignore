@@ -3,3 +3,4 @@
 .env
 /jira_*.json
 /push_*.json
+/tmp
