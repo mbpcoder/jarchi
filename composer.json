@@ -18,11 +18,11 @@
   },
   "autoload": {
     "psr-4": {
-      "Jarchi\\": "src/"
+      "Jarchi\\": "public/"
     },
     "files": [
-      "src/config.php",
-      "src/bot.php"
+      "config/services.php",
+      "public/bot.php"
     ]
   }
 }
