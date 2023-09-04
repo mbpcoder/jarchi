@@ -21,3 +21,9 @@ if (is_object($data) && isset($data->data)) {
 }
 
 echo 'success';
+
+
+function getRandomName()
+{
+    return __DIR__ . '/../tmp/' . 'crisp_' . substr(str_shuffle('abcdefghijklmnopqrstuvwxyz'), 0, 8) . '.json';
+}
