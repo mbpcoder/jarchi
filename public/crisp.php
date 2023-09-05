@@ -15,8 +15,8 @@ if ($debugMode) {
 
 if (is_object($data) && isset($data->data)) {
 
-    // send to telegram
-    $message = '<b>' . $data->data->user->nickname . '</b>' . PHP_EOL;
+    $chatUrl = "https://app.crisp.chat/website/{$data->data->website_id}/inbox/{$data->data->session_id}/";
+    $message = '<b><a href="' . $chatUrl . '">' . $data->data->user->nickname . '</a></b>' . PHP_EOL;
     $message .= $data->data->content . PHP_EOL;
     sendToTelegramBot($message, $botToken, $chatId, $topicId);
 }
