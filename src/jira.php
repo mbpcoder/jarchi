@@ -22,7 +22,7 @@ if (is_object($data)) {
             $message = getTaskMessage($domain, $data);
             break;
     }
-    sendToTelegramBot($botToken, $chatId, $message);
+    sendToTelegramBot($message, $botToken, $chatId);
 }
 
 echo 'success';

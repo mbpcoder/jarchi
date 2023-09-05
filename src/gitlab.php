@@ -23,7 +23,7 @@ if (is_object($data) && isset($data->event_name) && $data->event_name === 'push'
         $message .= '<a href="' . $_commit->url . '">' . $_commit->message . '</a>';
     }
 
-    sendToTelegramBot($botToken, $chatId, $message);
+    sendToTelegramBot($message, $botToken, $chatId);
 }
 
 echo 'success';
