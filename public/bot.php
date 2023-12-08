@@ -1,9 +1,11 @@
 <?php
 
+const MAXIMUM_CHAR_IN_MESSAGE = 4096;
+
 function sendToTelegramBot(string $message, string $botToken, string $chatId, string|null $topicId = null): void
 {
-    if (mb_strlen($message) > 600) {
-        $message = mb_substr($message, 0, 550) . '...';
+    if (mb_strlen($message) > MAXIMUM_CHAR_IN_MESSAGE) {
+        $message = mb_substr($message, 0, MAXIMUM_CHAR_IN_MESSAGE - 50) . '...';
     }
 
     $url = 'https://api.telegram.org/bot' . $botToken . '/sendMessage';
