@@ -2,7 +2,7 @@
 
 use Dotenv\Dotenv;
 
-$dotenv = Dotenv::createImmutable(__DIR__ . '/jarchi');
+$dotenv = Dotenv::createImmutable('..');
 $dotenv->load();
 
 $dotenv->ifPresent('DEBUG')->isBoolean();
