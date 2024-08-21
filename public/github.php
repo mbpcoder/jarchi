@@ -6,6 +6,10 @@ $botToken = config('GITHUB_BOT_TOKEN');
 $chatId = config('GITHUB_CHAT_ID');
 $debugMode = config('DEBUG', false);
 
+if (isset($_REQUEST['chat_id'])) {
+    $chatId = $_REQUEST['chat_id'];
+}
+
 $data = json_decode(file_get_contents('php://input'));
 
 if ($debugMode) {
