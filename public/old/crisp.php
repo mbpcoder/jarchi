@@ -10,7 +10,7 @@ $debugMode = config('DEBUG', false);
 $data = json_decode(file_get_contents('php://input'));
 
 if ($debugMode) {
-    file_put_contents(getRandomName(), json_encode($data));
+    file_put_contents(str_random(), json_encode($data));
 }
 
 if (is_object($data) && isset($data->data)) {

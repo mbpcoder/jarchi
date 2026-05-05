@@ -13,17 +13,19 @@
     }
   ],
   "require": {
+    "php": "8.4",
     "ext-mbstring": "*",
     "vlucas/phpdotenv": "^5.5",
-    "ext-curl": "*"
+    "ext-curl": "*",
+    "guzzlehttp/guzzle": "^7.0"
   },
   "autoload": {
     "psr-4": {
-      "Jarchi\\": "public/"
+      "App\\": "app/"
     },
     "files": [
       "config/services.php",
-      "public/bot.php"
+      "app/hepers.php"
     ]
   }
 }

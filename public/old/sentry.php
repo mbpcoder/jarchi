@@ -2,18 +2,14 @@
 
 require __DIR__ . '/../vendor/autoload.php';
 
-$botToken = config('GITLAB_BOT_TOKEN');
-$chatId = config('GITLAB_CHAT_ID');
+$botToken = config('SENTRY_BOT_TOKEN');
+$chatId = config('SENTRY_CHAT_ID');
 $debugMode = config('DEBUG', false);
-
-if (isset($_REQUEST['chat_id'])) {
-    $chatId = $_REQUEST['chat_id'];
-}
 
 $data = json_decode(file_get_contents('php://input'));
 
 if ($debugMode) {
-    file_put_contents(getRandomName(), json_encode($data));
+    file_put_contents(str_random(), json_encode($data));
 }
 
 if (is_object($data) && isset($data->event_name) && $data->event_name === 'push' && $data->total_commits_count > 0) {
@@ -32,13 +28,7 @@ if (is_object($data) && isset($data->event_name) && $data->event_name === 'push'
 
 echo 'success';
 
-function getBranchName($data)
-{
-    return substr($data->ref, strrpos($data->ref, '/') + 1);
-}
-
-
 function getRandomName()
 {
-    return __DIR__ . '/../tmp/' . 'push_' . substr(str_shuffle('abcdefghijklmnopqrstuvwxyz'), 0, 8) . '.json';
+    return __DIR__ . '/../tmp/' . 'sentry_' . substr(str_shuffle('abcdefghijklmnopqrstuvwxyz'), 0, 8) . '.json';
 }
