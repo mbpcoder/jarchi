@@ -23,3 +23,6 @@ Just add your telegram bot token and chat id.
 ⏳ Trello
 
 ⏳ Github
+
+
+expose share http://jarchi.local:80 --server-host=5.182.46.55 --server-port=8080 --subdomain=jarchi --auth=mahdi.bagheri

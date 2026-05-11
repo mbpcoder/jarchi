@@ -22,9 +22,9 @@ if ($provider === '') {
 
 $botManager = new BotManager();
 $debugMode = config('app.debug', false);
-$data = json_decode(file_get_contents('php://input'));
+$data = json_decode(file_get_contents('php://input'), true);
 
-if ($debugMode) {
+if (true) {
     file_put_contents(str_random($provider), json_encode($data));
 }
 
@@ -95,12 +95,12 @@ function handleCrisp(mixed $data): string
 
 function handleSentry(mixed $data): string
 {
-    if (!is_object($data) || (!isset($data->event_name) && !isset($data->event))) {
-        return '';
-    }
+//    if (!is_object($data) || (!isset($data->event_name) && !isset($data->event))) {
+//        return '';
+//    }
 
     $parser = new Sentry($data);
-    return $parser->parseMessage();
+    return $parser->formatSentryEventForTelegram();
 }
 
 function getDefaultChatId(string $provider): string
