@@ -5,3 +5,4 @@
 /push_*.json
 /tmp
 composer.lock
+storage
