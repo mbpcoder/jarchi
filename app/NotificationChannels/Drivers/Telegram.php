@@ -1,13 +1,13 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Bots\Drivers;
+namespace App\NotificationChannels\Drivers;
 
-use App\Bots\DTOs\MessageDTO;
+use App\NotificationChannels\DTOs\MessageDTO;
 
-class Slack extends Base
+class Telegram extends Base
 {
-    const MAXIMUM_CHAR_IN_MESSAGE = 4000;
+    const MAXIMUM_CHAR_IN_MESSAGE = 4096;
 
     public function sendMessage(MessageDTO $dto): bool
     {
@@ -17,15 +17,16 @@ class Slack extends Base
             $message = mb_substr($message, 0, self::MAXIMUM_CHAR_IN_MESSAGE - 50) . '...';
         }
 
-        $url = 'https://slack.com/api/chat.postMessage';
+        $url = 'https://api.telegram.org/bot' . $this->config['token'] . '/sendMessage';
         $data = [
-            'channel' => $dto->chatId,
+            'chat_id' => $dto->chatId,
             'text' => $message,
-            'token' => $this->config['token'] ?? null,
+            'disable_web_page_preview' => true,
+            'parse_mode' => 'html',
         ];
 
         if ($dto->topicId !== null) {
-            $data['thread_ts'] = $dto->topicId;
+            $data['message_thread_id'] = $dto->topicId;
         }
 
         $response = $this->postRequest($url, $data);

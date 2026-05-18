@@ -13,15 +13,11 @@ if ($debugMode) {
 }
 
 if (is_object($data)) {
-    $domain = parse_url($data?->issue?->self, PHP_URL_SCHEME) . "://" . parse_url($data?->issue?->self, PHP_URL_HOST);
-    switch ($data->webhookEvent) {
-        case 'comment_created':
-            $message = getCommentMessage($domain, $data);
-            break;
-        default:
-            $message = getTaskMessage($domain, $data);
-            break;
-    }
+    $domain = parse_url((string) $data?->issue?->self, PHP_URL_SCHEME) . "://" . parse_url((string) $data?->issue?->self, PHP_URL_HOST);
+    $message = match ($data->webhookEvent) {
+        'comment_created' => getCommentMessage($domain, $data),
+        default => getTaskMessage($domain, $data),
+    };
     sendToTelegramBot($message, $botToken, $chatId);
 }
 
@@ -55,11 +51,11 @@ function getTaskMessage(string $domain, object $data): string
 
     if (!empty($data?->issue?->fields?->summary)) {
         $cardUrl = $domain . '/browse/' . $data?->issue?->key;
-        $message .= '<b><a href="' . $cardUrl . '">Summery: </a></b>' . strip_tags($data?->issue?->fields?->summary) . PHP_EOL;
+        $message .= '<b><a href="' . $cardUrl . '">Summery: </a></b>' . strip_tags((string) $data?->issue?->fields?->summary) . PHP_EOL;
     }
 
     if (!empty($data?->issue?->fields?->description)) {
-        $message .= '<b>Description: </b>' . strip_tags($data?->issue?->fields?->description) . PHP_EOL;
+        $message .= '<b>Description: </b>' . strip_tags((string) $data?->issue?->fields?->description) . PHP_EOL;
     }
 
     return $message;
@@ -74,7 +70,7 @@ function getCommentMessage(string $domain, object $data): string
     $message .= '<b><a href="' . $userUrl . '">' . $data?->comment?->author?->displayName . '</a></b>' . PHP_EOL;
 
     if (!empty($data?->comment?->body)) {
-        $message .= '<b>Description: </b>' . strip_tags($data?->comment?->body) . PHP_EOL;
+        $message .= '<b>Description: </b>' . strip_tags((string) $data?->comment?->body) . PHP_EOL;
     }
 
     return $message;

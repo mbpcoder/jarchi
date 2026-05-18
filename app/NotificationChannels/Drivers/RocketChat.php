@@ -1,9 +1,9 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Bots\Drivers;
+namespace App\NotificationChannels\Drivers;
 
-use App\Bots\DTOs\MessageDTO;
+use App\NotificationChannels\DTOs\MessageDTO;
 
 class RocketChat extends Base
 {

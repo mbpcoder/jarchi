@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Bots\DTOs;
+namespace App\NotificationChannels\DTOs;
 
 class MessageDTO
 {

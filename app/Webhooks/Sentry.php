@@ -5,11 +5,8 @@ namespace App\Webhooks;
 
 class Sentry
 {
-    private $data;
-
-    public function __construct($data)
+    public function __construct(private $data)
     {
-        $this->data = $data;
     }
 
 
@@ -35,7 +32,7 @@ class Sentry
         
         // DateTime formatting
         $dateTimeString = $event['datetime'] ?? null;
-        $dateTime = $dateTimeString ? date('Y-m-d H:i:s', strtotime($dateTimeString)) : 'unknown';
+        $dateTime = $dateTimeString ? date('Y-m-d H:i:s', strtotime((string) $dateTimeString)) : 'unknown';
 
         // --- Extract file and line from stack trace (prefer in_app frames) ---
         $file = null;
@@ -54,7 +51,7 @@ class Sentry
         // If no in_app frame, use the last frame
         if (!$file && !empty($stacktrace)) {
             $lastFrame = end($stacktrace);
-            $file = basename($lastFrame['abs_path'] ?? $lastFrame['filename'] ?? '');
+            $file = basename((string) ($lastFrame['abs_path'] ?? $lastFrame['filename'] ?? ''));
             $line = $lastFrame['lineno'] ?? null;
         }
 
@@ -101,8 +98,8 @@ class Sentry
         if (is_array($headers)) {
             foreach ($headers as $header) {
                 if (is_array($header) && count($header) >= 2) {
-                    if (strtolower($header[0]) === 'x-forwarded-for') {
-                        return trim(explode(',', $header[1])[0]);
+                    if (strtolower((string) $header[0]) === 'x-forwarded-for') {
+                        return trim(explode(',', (string) $header[1])[0]);
                     }
                 }
             }

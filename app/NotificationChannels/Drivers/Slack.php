@@ -1,13 +1,13 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Bots\Drivers;
+namespace App\NotificationChannels\Drivers;
 
-use App\Bots\DTOs\MessageDTO;
+use App\NotificationChannels\DTOs\MessageDTO;
 
-class Bale extends Base
+class Slack extends Base
 {
-    const MAXIMUM_CHAR_IN_MESSAGE = 4096;
+    const MAXIMUM_CHAR_IN_MESSAGE = 4000;
 
     public function sendMessage(MessageDTO $dto): bool
     {
@@ -17,16 +17,15 @@ class Bale extends Base
             $message = mb_substr($message, 0, self::MAXIMUM_CHAR_IN_MESSAGE - 50) . '...';
         }
 
-        $url = 'https://tapi.bale.ai/bot' . $this->config['token'] . '/sendMessage';
+        $url = 'https://slack.com/api/chat.postMessage';
         $data = [
-            'chat_id' => $dto->chatId,
+            'channel' => $dto->chatId,
             'text' => $message,
-            'disable_web_page_preview' => true,
-            'parse_mode' => 'html',
+            'token' => $this->config['token'] ?? null,
         ];
 
         if ($dto->topicId !== null) {
-            $data['message_thread_id'] = $dto->topicId;
+            $data['thread_ts'] = $dto->topicId;
         }
 
         $response = $this->postRequest($url, $data);

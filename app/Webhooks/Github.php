@@ -5,11 +5,8 @@ namespace App\Webhooks;
 
 class Github
 {
-    private object $data;
-
-    public function __construct(object $data)
+    public function __construct(private readonly object $data)
     {
-        $this->data = $data;
     }
 
     public function parseMessage(): string

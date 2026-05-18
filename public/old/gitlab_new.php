@@ -2,8 +2,8 @@
 
 require __DIR__ . '/../vendor/autoload.php';
 
-use app\Bots\BotManager;
-use app\Bots\DTOs\MessageDTO;
+use app\NotificationChannels\BotManager;
+use app\NotificationChannels\DTOs\MessageDTO;
 use App\Webhooks\Gitlab;
 
 $botManager = new BotManager();

@@ -5,11 +5,8 @@ namespace App\Webhooks;
 
 class Trello
 {
-    private object $data;
-
-    public function __construct(object $data)
+    public function __construct(private readonly object $data)
     {
-        $this->data = $data;
     }
 
     public function parseMessage(): string
@@ -98,7 +95,7 @@ class Trello
         }
 
         if (!empty($action->data->text)) {
-            $message .= 'Text: ' . strip_tags($action->data->text) . PHP_EOL;
+            $message .= 'Text: ' . strip_tags((string) $action->data->text) . PHP_EOL;
         }
 
         return $message;

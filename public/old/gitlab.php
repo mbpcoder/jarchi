@@ -34,7 +34,7 @@ echo 'success';
 
 function getBranchName($data)
 {
-    return substr($data->ref, strrpos($data->ref, '/') + 1);
+    return substr((string) $data->ref, strrpos((string) $data->ref, '/') + 1);
 }
 
 

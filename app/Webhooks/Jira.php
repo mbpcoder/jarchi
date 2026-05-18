@@ -5,11 +5,8 @@ namespace App\Webhooks;
 
 class Jira
 {
-    private object $data;
-
-    public function __construct(object $data)
+    public function __construct(private readonly object $data)
     {
-        $this->data = $data;
     }
 
     public function parseMessage(): string
@@ -57,11 +54,11 @@ class Jira
 
         if (!empty($this->data?->issue?->fields?->summary)) {
             $cardUrl = $domain . '/browse/' . ($this->data?->issue?->key ?? '');
-            $message .= '<b><a href="' . $cardUrl . '">Summery: </a></b>' . strip_tags($this->data->issue->fields->summary) . PHP_EOL;
+            $message .= '<b><a href="' . $cardUrl . '">Summery: </a></b>' . strip_tags((string) $this->data->issue->fields->summary) . PHP_EOL;
         }
 
         if (!empty($this->data?->issue?->fields?->description)) {
-            $message .= '<b>Description: </b>' . strip_tags($this->data->issue->fields->description) . PHP_EOL;
+            $message .= '<b>Description: </b>' . strip_tags((string) $this->data->issue->fields->description) . PHP_EOL;
         }
 
         return $message;
@@ -75,7 +72,7 @@ class Jira
         $message .= '<b><a href="' . $userUrl . '">' . ($this->data?->comment?->author?->displayName ?? '') . '</a></b>' . PHP_EOL;
 
         if (!empty($this->data?->comment?->body)) {
-            $message .= '<b>Description: </b>' . strip_tags($this->data->comment->body) . PHP_EOL;
+            $message .= '<b>Description: </b>' . strip_tags((string) $this->data->comment->body) . PHP_EOL;
         }
 
         return $message;

@@ -1,11 +1,11 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Bots\Drivers;
+namespace App\NotificationChannels\Drivers;
 
-use App\Bots\DTOs\MessageDTO;
+use App\NotificationChannels\DTOs\MessageDTO;
 
-class Telegram extends Base
+class Bale extends Base
 {
     const MAXIMUM_CHAR_IN_MESSAGE = 4096;
 
@@ -17,7 +17,7 @@ class Telegram extends Base
             $message = mb_substr($message, 0, self::MAXIMUM_CHAR_IN_MESSAGE - 50) . '...';
         }
 
-        $url = 'https://api.telegram.org/bot' . $this->config['token'] . '/sendMessage';
+        $url = 'https://tapi.bale.ai/bot' . $this->config['token'] . '/sendMessage';
         $data = [
             'chat_id' => $dto->chatId,
             'text' => $message,

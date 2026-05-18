@@ -1,13 +1,15 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Bots;
+namespace App\NotificationChannels;
 
+use App\NotificationChannels\Drivers\Bale;
+use App\NotificationChannels\Drivers\Base;
+use App\NotificationChannels\Drivers\Email as EmailDriver;
+use App\NotificationChannels\Drivers\LogChannel;
+use App\NotificationChannels\Drivers\RocketChat;
+use App\NotificationChannels\Drivers\Telegram;
 use InvalidArgumentException;
-use App\Bots\Drivers\Base;
-use App\Bots\Drivers\Telegram;
-use App\Bots\Drivers\Bale;
-use App\Bots\Drivers\RocketChat;
 
 class BotManager
 {
@@ -75,8 +77,21 @@ class BotManager
         return new RocketChat($config);
     }
 
+    protected function createEmailDriver(array $config): Base
+    {
+        return new EmailDriver($config);
+    }
+
     public function __call(string $method, array $parameters)
     {
         return $this->driver()->{$method}(...$parameters);
+    }
+
+    public function createChannel(string $channel): Base
+    {
+        return match ($channel) {
+            'log' => new LogChannel(),
+            // ...existing cases...
+        };
     }
 }

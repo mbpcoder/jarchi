@@ -1,21 +1,19 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Bots\Drivers;
+namespace App\Drivers\Drivers;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
-use App\Bots\DTOs\MessageDTO;
+use App\Drivers\DTOs\MessageDTO;
 
 abstract class Base
 {
     protected Client $client;
-    protected array $config;
 
-    public function __construct(array $config = [])
+    public function __construct(protected array $config = [])
     {
         $this->client = new Client();
-        $this->config = $config;
     }
 
     abstract public function sendMessage(MessageDTO $dto): bool;
