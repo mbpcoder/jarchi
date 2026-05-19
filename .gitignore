@@ -4,6 +4,7 @@
 /jira_*.json
 /push_*.json
 /tmp
+/storage
 composer.lock
 expose.yml
 .phpunit.result.cache
