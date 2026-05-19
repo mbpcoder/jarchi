@@ -5,4 +5,5 @@
 /push_*.json
 /tmp
 composer.lock
-storage
+expose.yml
+.phpunit.result.cache
