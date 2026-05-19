@@ -5,7 +5,7 @@ namespace App\NotificationChannels;
 
 use App\NotificationChannels\Drivers\Bale;
 use App\NotificationChannels\Drivers\Base;
-use App\NotificationChannels\Drivers\Email as EmailDriver;
+use App\NotificationChannels\Drivers\EmailDriver;
 use App\NotificationChannels\Drivers\LogChannel;
 use App\NotificationChannels\Drivers\RocketChat;
 use App\NotificationChannels\Drivers\Telegram;
@@ -82,6 +82,11 @@ class BotManager
         return new EmailDriver($config);
     }
 
+    protected function createLogDriver(array $config): Base
+    {
+        return new LogChannel($config);
+    }
+
     public function __call(string $method, array $parameters)
     {
         return $this->driver()->{$method}(...$parameters);
@@ -90,7 +95,7 @@ class BotManager
     public function createChannel(string $channel): Base
     {
         return match ($channel) {
-            'log' => new LogChannel(),
+            'log' => new LogChannel($this->getConfig('log') ?? []),
             // ...existing cases...
         };
     }

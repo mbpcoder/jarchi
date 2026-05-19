@@ -4,18 +4,26 @@ declare(strict_types=1);
 
 namespace App\NotificationChannels\Drivers;
 
-use App\Drivers\DTOs\MessageDTO;
+use App\NotificationChannels\DTOs\MessageDTO;
 use Monolog\Handler\RotatingFileHandler;
 use Monolog\Logger;
 
-class LogChannel
+class LogChannel extends Base
 {
     private Logger $logger;
 
-    public function __construct()
+    public function __construct(array $config = [])
     {
-        $logPath = __DIR__ . '/../../storage/logs/jarchilog.log';
-        $this->logger = new Logger('jarchi');
+        parent::__construct($config);
+
+        $logPath = $config['path'] ?? storage_path('logs/notification.log');
+        $logDir = dirname($logPath);
+
+        if (!is_dir($logDir)) {
+            mkdir($logDir, 0777, true);
+        }
+
+        $this->logger = new Logger($config['name'] ?? 'jarchi');
         $this->logger->pushHandler(new RotatingFileHandler($logPath, 7, Logger::DEBUG));
     }
 
@@ -27,7 +35,7 @@ class LogChannel
                 'text' => $dto->text,
             ]);
             return true;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error('Failed to log notification', ['error' => $e->getMessage()]);
             return false;
         }

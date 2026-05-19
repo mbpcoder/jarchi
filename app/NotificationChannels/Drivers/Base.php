@@ -1,11 +1,11 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Drivers\Drivers;
+namespace App\NotificationChannels\Drivers;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
-use App\Drivers\DTOs\MessageDTO;
+use App\NotificationChannels\DTOs\MessageDTO;
 
 abstract class Base
 {
