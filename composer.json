@@ -13,7 +13,7 @@
     }
   ],
   "require": {
-    "php": "^8.4",
+    "php": "^8.5",
     "ext-mbstring": "*",
     "vlucas/phpdotenv": "^5.5",
     "ext-curl": "*",
