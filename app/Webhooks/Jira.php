@@ -23,6 +23,17 @@ class Jira
         };
     }
 
+    public function getActionUrl(): string
+    {
+        $domain = $this->getDomain();
+        return $domain . '/browse/' . ($this->data?->issue?->key ?? '');
+    }
+
+    public function getActionLabel(): string
+    {
+        return 'Open Jira Issue';
+    }
+
     private function getDomain(): string
     {
         $self = $this->data?->issue?->self ?? '';

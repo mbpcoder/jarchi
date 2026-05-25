@@ -4,53 +4,48 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
-use App\NotificationChannels\BotManager;
-use App\NotificationChannels\DTOs\MessageDTO;
+use App\Notifications\CrispNotification;
+use App\Notifications\GithubNotification;
+use App\Notifications\GitlabNotification;
+use App\Notifications\JiraNotification;
+use App\Notifications\SentryNotification;
+use App\Webhooks\Crisp;
 use App\Webhooks\Gitlab;
 use App\Webhooks\Github;
 use App\Webhooks\Jira;
-use App\Webhooks\Crisp;
 use App\Webhooks\Sentry;
-use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Notification;
 use InvalidArgumentException;
 use Throwable;
 
 class WebhookController extends Controller
 {
-    public function __construct(
-        private BotManager $botManager
-    ) {}
-
     public function handle(Request $request): JsonResponse
     {
-        $provider = strtolower(trim($request->input('provider', '')));
-        $bot = strtolower(trim($request->input('bot', '')));
-        $chatId = $request->input('chat_id');
+        $provider = strtolower(trim((string) $request->input('provider', '')));
+        $channel = strtolower(trim((string) ($request->input('channel') ?? $request->input('bot', ''))));
+        $target = $request->input('target') ?? $request->input('chat_id');
 
         if ($provider === '') {
             return response()->json(['message' => 'Hello, I am Jarchi!']);
         }
 
         try {
-            $data = $request->getContent();
-            $data = json_decode($data, false);
-
-            $message = match ($provider) {
-                'gitlab' => $this->handleGitlab($data),
-                'github' => $this->handleGithub($data),
-                'jira' => $this->handleJira($data),
-                'crisp' => $this->handleCrisp($data),
-                'sentry' => $this->handleSentry($data),
-                default => throw new InvalidArgumentException('Unknown provider: ' . $provider),
-            };
+            $channel = $this->normalizeChannel($channel ?: config('bot.default_driver', 'telegram'));
+            $parser = $this->resolveParser($provider, json_decode($request->getContent(), false));
+            $message = $this->resolveMessage($provider, $parser);
 
             if ($message !== '') {
-                $this->sendMessage(
-                    chatId: $chatId ?? $this->getDefaultChatId($provider),
-                    message: $message,
-                    botName: $bot ?: $this->botManager->getDefaultDriver()
-                );
+                $target = $target ?: $this->getDefaultTarget($provider, $channel);
+
+                if ($target === '') {
+                    throw new InvalidArgumentException('target is required either by request or provider default config.');
+                }
+
+                $notification = $this->createNotification($provider, $channel, $message, $parser);
+                Notification::route($channel, $target)->notify($notification);
             }
 
             return response()->json(['status' => 'success']);
@@ -59,69 +54,75 @@ class WebhookController extends Controller
         }
     }
 
-    private function handleGitlab(mixed $data): string
+    private function normalizeChannel(string $channel): string
     {
-        if (!is_object($data) || !isset($data->event_name) || $data->event_name !== 'push' || empty($data->commits)) {
-            return '';
+        return match ($channel) {
+            'email' => 'mail',
+            'mail', 'log', 'telegram', 'bale', 'rocketchat' => $channel,
+            default => throw new InvalidArgumentException("Unsupported channel: {$channel}"),
+        };
+    }
+
+    private function resolveParser(string $provider, mixed $data): object
+    {
+        return match ($provider) {
+            'gitlab' => new Gitlab($data),
+            'github' => new Github($data),
+            'jira' => new Jira($data),
+            'crisp' => new Crisp($data),
+            'sentry' => new Sentry($data),
+            default => throw new InvalidArgumentException("Unknown provider: {$provider}"),
+        };
+    }
+
+    private function resolveMessage(string $provider, object $parser): string
+    {
+        return $provider === 'sentry'
+            ? $parser->formatSentryEventForTelegram()
+            : $parser->parseMessage();
+    }
+
+    private function getDefaultTarget(string $provider, string $channel): string
+    {
+        if ($channel === 'log') {
+            return (string) config('logging.default', 'stack');
         }
 
-        $parser = new Gitlab($data);
-        return $parser->parseMessage();
-    }
-
-    private function handleGithub(mixed $data): string
-    {
-        if (!is_object($data) || !isset($data->commits) || empty($data->commits)) {
-            return '';
+        if ($channel === 'mail') {
+            return (string) (config("webhooks.{$provider}.chat_id") ?? config('mail.from.address', ''));
         }
 
-        $parser = new Github($data);
-        return $parser->parseMessage();
-    }
-
-    private function handleJira(mixed $data): string
-    {
-        if (!is_object($data) || !isset($data->webhookEvent)) {
-            return '';
-        }
-
-        $parser = new Jira($data);
-        return $parser->parseMessage();
-    }
-
-    private function handleCrisp(mixed $data): string
-    {
-        if (!is_object($data) || !isset($data->data)) {
-            return '';
-        }
-
-        $parser = new Crisp($data);
-        return $parser->parseMessage();
-    }
-
-    private function handleSentry(mixed $data): string
-    {
-        $parser = new Sentry($data);
-        return $parser->formatSentryEventForTelegram();
-    }
-
-    private function getDefaultChatId(string $provider): string
-    {
         return (string) (config("webhooks.{$provider}.chat_id") ?? '');
     }
 
-    private function sendMessage(string $chatId, string $message, string $botName): void
+    private function createNotification(string $provider, string $channel, string $message, object $parser): \Illuminate\Notifications\Notification
     {
-        if ($chatId === '') {
-            throw new InvalidArgumentException('chat_id is required either by request or provider default config.');
-        }
+        $metadata = [
+            'action_url' => $this->getParserActionUrl($parser),
+            'action_label' => $this->getParserActionLabel($parser),
+        ];
 
-        $dto = new MessageDTO(
-            chatId: $chatId,
-            text: $message
-        );
+        return match ($provider) {
+            'gitlab' => new GitlabNotification($message, $channel, $metadata),
+            'github' => new GithubNotification($message, $channel, $metadata),
+            'jira' => new JiraNotification($message, $channel, $metadata),
+            'crisp' => new CrispNotification($message, $channel, $metadata),
+            'sentry' => new SentryNotification($message, $channel, $metadata),
+            default => throw new InvalidArgumentException("Unknown provider: {$provider}"),
+        };
+    }
 
-        $driver = $this->botManager->resolveDriver($botName);
-        $driver->sendMessage($dto);
+    private function getParserActionUrl(object $parser): string
+    {
+        return method_exists($parser, 'getActionUrl')
+            ? (string) $parser->getActionUrl()
+            : '';
+    }
+
+    private function getParserActionLabel(object $parser): string
+    {
+        return method_exists($parser, 'getActionLabel')
+            ? (string) $parser->getActionLabel()
+            : '';
     }
 }

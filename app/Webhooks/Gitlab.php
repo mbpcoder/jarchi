@@ -23,6 +23,16 @@ class Gitlab
         return $message;
     }
 
+    public function getActionUrl(): string
+    {
+        return $this->data->project->web_url ?? ($this->data->commits[0]->url ?? '');
+    }
+
+    public function getActionLabel(): string
+    {
+        return 'Open GitLab';
+    }
+
     private function getBranchName(): string
     {
         return substr($this->data->ref, strrpos($this->data->ref, '/') + 1);

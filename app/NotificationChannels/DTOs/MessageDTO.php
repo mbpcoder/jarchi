@@ -8,6 +8,7 @@ class MessageDTO
     public function __construct(
         public string $chatId,
         public string $text,
-        public null|string $topicId = null
+        public null|string $topicId = null,
+        public array $replyMarkup = []
     ) {}
 }

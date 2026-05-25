@@ -25,6 +25,16 @@ class Github
         return $message;
     }
 
+    public function getActionUrl(): string
+    {
+        return $this->data->repository->html_url ?? ($this->data->commits[0]->url ?? '');
+    }
+
+    public function getActionLabel(): string
+    {
+        return 'Open GitHub';
+    }
+
     private function getBranchName(): string
     {
         $ref = $this->data->ref ?? '';

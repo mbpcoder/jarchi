@@ -14,8 +14,8 @@ use App\Webhooks\Sentry;
 function bootstrap(): void
 {
     $provider = strtolower(trim($_REQUEST['provider'] ?? ''));
-    $bot = strtolower(trim($_REQUEST['bot'] ?? ''));
-    $chatId = $_REQUEST['chat_id'] ?? null;
+    $bot = strtolower(trim($_REQUEST['channel'] ?? $_REQUEST['bot'] ?? ''));
+    $chatId = $_REQUEST['target'] ?? $_REQUEST['chat_id'] ?? null;
 
     if ($provider === '') {
         echo 'Hello, I am Jarchi!';

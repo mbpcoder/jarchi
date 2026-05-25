@@ -6,9 +6,11 @@ return [
     'drivers' => [
         'telegram' => [
             'token' => env('TELEGRAM_TOKEN'),
+            'base_url' => env('TELEGRAM_BASE_URL', 'https://api.telegram.org'),
         ],
         'bale' => [
             'token' => env('BALE_TOKEN'),
+            'base_url' => env('BALE_BASE_URL', 'https://tapi.bale.ai'),
         ],
         'rocketchat' => [
             'base_url' => env('ROCKETCHAT_BASE_URL'),

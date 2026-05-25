@@ -17,7 +17,8 @@ class Bale extends Base
             $message = mb_substr($message, 0, self::MAXIMUM_CHAR_IN_MESSAGE - 50) . '...';
         }
 
-        $url = 'https://tapi.bale.ai/bot' . $this->config['token'] . '/sendMessage';
+        $baseUrl = rtrim($this->config['base_url'] ?? 'https://tapi.bale.ai', '/');
+        $url = $baseUrl . '/bot' . $this->config['token'] . '/sendMessage';
         $data = [
             'chat_id' => $dto->chatId,
             'text' => $message,
@@ -27,6 +28,10 @@ class Bale extends Base
 
         if ($dto->topicId !== null) {
             $data['message_thread_id'] = $dto->topicId;
+        }
+
+        if (!empty($dto->replyMarkup)) {
+            $data['reply_markup'] = $dto->replyMarkup;
         }
 
         $response = $this->postRequest($url, $data);

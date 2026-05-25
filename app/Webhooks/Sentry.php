@@ -9,15 +9,14 @@ class Sentry
     {
     }
 
-
     /**
      * Parse Sentry error event from webhook JSON and format a concise, helpful message.
      *
      * @return string Formatted message for messaging platforms.
      */
-    function formatSentryEventForTelegram(): string
+    public function formatSentryEventForTelegram(): string
     {
-        $payload = $this->data;
+        $payload = is_array($this->data) ? $this->data : json_decode(json_encode($this->data), true);
         $event = $payload['data']['error'] ?? [];
 
         if (empty($event)) {
@@ -86,6 +85,17 @@ class Sentry
         $message .= "<a href=\"{$webUrl}\">🔗 View in Sentry</a>\n";
 
         return $message;
+    }
+
+    public function getActionUrl(): string
+    {
+        $payload = is_array($this->data) ? $this->data : json_decode(json_encode($this->data), true);
+        return $payload['data']['error']['web_url'] ?? 'https://sentry.io';
+    }
+
+    public function getActionLabel(): string
+    {
+        return 'View in Sentry';
     }
 
     /**

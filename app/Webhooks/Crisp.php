@@ -35,4 +35,15 @@ class Crisp
 
         return $message;
     }
+
+    public function getActionUrl(): string
+    {
+        $data = $this->data->data ?? null;
+        return 'https://app.crisp.chat/website/' . ($data->website_id ?? '') . '/inbox/' . ($data->session_id ?? '') . '/';
+    }
+
+    public function getActionLabel(): string
+    {
+        return 'Open Crisp';
+    }
 }
