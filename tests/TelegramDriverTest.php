@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests;
 
-use PHPUnit\Framework\TestCase;
 use App\NotificationChannels\Drivers\Telegram;
 use App\NotificationChannels\DTOs\MessageDTO;
 

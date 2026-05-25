@@ -13,9 +13,9 @@
     }
   ],
   "require": {
-    "php": "^8.5",
+    "php": "^8.4",
+    "laravel/framework": "^13.0",
     "ext-mbstring": "*",
-    "vlucas/phpdotenv": "^5.5",
     "ext-curl": "*",
     "guzzlehttp/guzzle": "^7.0",
     "monolog/monolog": "^3.10"
@@ -28,9 +28,17 @@
       "app/hepers.php"
     ]
   },
+  "autoload-dev": {
+    "psr-4": {
+      "Tests\\": "tests/"
+    }
+  },
   "require-dev": {
     "rector/rector": "^2.4",
-    "phpunit/phpunit": "^13.1"
+    "phpunit/phpunit": "^13.1",
+    "laravel/pail": "^1.2",
+    "laravel/tinker": "^3.0",
+    "nunomaduro/collision": "^8.9"
   },
   "config": {
     "allow-plugins": {
