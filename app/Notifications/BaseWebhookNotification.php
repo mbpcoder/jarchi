@@ -5,14 +5,13 @@ namespace App\Notifications;
 
 use App\Notifications\Channels\BaleChannel;
 use App\Notifications\Channels\RocketChatChannel;
-use App\Notifications\Channels\TelegramChannel;
 use App\Notifications\Messages\BaleMessage;
 use App\Notifications\Messages\RocketChatMessage;
-use App\Notifications\Messages\TelegramMessage;
 use Illuminate\Notifications\Messages\LogMessage;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use InvalidArgumentException;
+use NotificationChannels\Telegram\TelegramMessage;
 
 abstract class BaseWebhookNotification extends Notification
 {
@@ -36,7 +35,7 @@ abstract class BaseWebhookNotification extends Notification
     protected function getChannelClass(): string
     {
         return match ($this->channel) {
-            'telegram' => TelegramChannel::class,
+            'telegram' => 'telegram',
             'bale' => BaleChannel::class,
             'rocketchat' => RocketChatChannel::class,
             'mail' => 'mail',
@@ -48,8 +47,8 @@ abstract class BaseWebhookNotification extends Notification
     public function toTelegram($notifiable): TelegramMessage
     {
         $telegramMessage = TelegramMessage::create($this->message)
-            ->parseMode('HTML')
-            ->disableWebPagePreview(true);
+            ->parseMode('html')
+            ->linkPreviewOptions(['is_disabled' => true]);
 
         if (!empty($this->metadata['action_url'])) {
             $telegramMessage->button(
