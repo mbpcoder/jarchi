@@ -1,0 +1,34 @@
+<?php
+declare(strict_types=1);
+
+namespace App\NotificationChannels\Drivers;
+
+use App\NotificationChannels\DTOs\MessageDTO;
+
+class Slack extends Base
+{
+    const MAXIMUM_CHAR_IN_MESSAGE = 4000;
+
+    public function sendMessage(MessageDTO $dto): bool
+    {
+        $message = $dto->text;
+
+        if (mb_strlen($message) > self::MAXIMUM_CHAR_IN_MESSAGE) {
+            $message = mb_substr($message, 0, self::MAXIMUM_CHAR_IN_MESSAGE - 50) . '...';
+        }
+
+        $url = 'https://slack.com/api/chat.postMessage';
+        $data = [
+            'channel' => $dto->chatId,
+            'text' => $message,
+            'token' => $this->config['token'] ?? null,
+        ];
+
+        if ($dto->topicId !== null) {
+            $data['thread_ts'] = $dto->topicId;
+        }
+
+        $response = $this->postRequest($url, $data);
+        return isset($response['ok']) && $response['ok'];
+    }
+}

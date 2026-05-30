@@ -1,18 +1,43 @@
 <?php
 
-use Dotenv\Dotenv;
+return [
 
-$dotenv = Dotenv::createImmutable('..');
-$dotenv->load();
+    /*
+    |--------------------------------------------------------------------------
+    | Third Party Services
+    |--------------------------------------------------------------------------
+    |
+    | This file is for storing the credentials for third party services such
+    | as Mailgun, Postmark, AWS and more. This file provides the de facto
+    | location for this type of information, allowing packages to have
+    | a conventional file to locate the various service credentials.
+    |
+    */
 
-$dotenv->ifPresent('DEBUG')->isBoolean();
+    'postmark' => [
+        'key' => env('POSTMARK_API_KEY'),
+    ],
 
-function config(string $key, mixed $default = null)
-{
-    $result = $_ENV[$key] ?? $default;
-    switch ($key) {
-        case 'DEBUG':
-            return $result === 'true';
-    }
-    return $result;
-}
+    'resend' => [
+        'key' => env('RESEND_API_KEY'),
+    ],
+
+    'ses' => [
+        'key' => env('AWS_ACCESS_KEY_ID'),
+        'secret' => env('AWS_SECRET_ACCESS_KEY'),
+        'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
+    ],
+
+    'slack' => [
+        'notifications' => [
+            'bot_user_oauth_token' => env('SLACK_BOT_USER_OAUTH_TOKEN'),
+            'channel' => env('SLACK_BOT_USER_DEFAULT_CHANNEL'),
+        ],
+    ],
+
+    'telegram' => [
+        'token' => env('TELEGRAM_BOT_TOKEN', env('TELEGRAM_TOKEN')),
+        'base_uri' => env('TELEGRAM_BASE_URL'),
+    ],
+
+];
